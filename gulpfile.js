@@ -59,14 +59,19 @@ var jsCustomDestination     = './dist/assets/js/'; // Path to place the compiled
 var jsCustomFile            = 'custom'; // Compiled JS custom file name.
 // Default set to custom i.e. custom.js.
 
+// JS Core related.
+var jsCoreSRC               = './src/assets/js/*.js'; // Path to core JS scripts folder.
+var jsCoreDestination       = './dist/assets/js/'; // Path to copy the untouched core script files.
+
 // Images related.
 var imagesSRC               = './src/assets/img/raw/**/*.{png,jpg,gif,svg}'; // Source folder of images which should be optimized.
 var imagesDestination       = './dist/assets/img/'; // Destination folder of optimized images. Must be different from the imagesSRC folder.
 
 // Watch files paths.
-var styleWatchFiles         = './assets/css/**/*.scss'; // Path to all *.scss files inside css folder and inside them.
-var vendorJSWatchFiles      = './assets/js/vendor/*.js'; // Path to all vendor JS files.
-var customJSWatchFiles      = './assets/js/custom/*.js'; // Path to all custom JS files.
+var styleWatchFiles         = './src/assets/css/**/*.scss'; // Path to all *.scss files inside css folder and inside them.
+var vendorJSWatchFiles      = './src/assets/js/vendor/*.js'; // Path to all vendor JS files.
+var customJSWatchFiles      = './src/assets/js/custom/*.js'; // Path to all custom JS files.
+var coreJSWatchFiles        = './src/assets/js/*.js'; // Path to all core JS files.
 var projectPHPWatchFiles    = './**/*.php'; // Path to all PHP files.
 
 
@@ -202,7 +207,7 @@ gulp.task( 'browser-sync', function() {
 
     .pipe( filter( '**/*.css' ) ) // Filtering stream to only css files
     .pipe( browserSync.stream() )// Reloads style.min.css if that is enqueued.
-    .pipe( notify( { message: 'TASK: "styles" Completed! 💯', onLast: true } ) )
+    .pipe( notify( { message: 'Task: "styles" completed.', onLast: true } ) )
  });
 
 
@@ -229,7 +234,7 @@ gulp.task( 'browser-sync', function() {
     .pipe( uglify() )
     .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
     .pipe( gulp.dest( jsVendorDestination ) )
-    .pipe( notify( { message: 'TASK: "vendorsJs" Completed! 💯', onLast: true } ) );
+    .pipe( notify( { message: 'Task: "vendorsJs" completed.', onLast: true } ) );
  });
 
 
@@ -256,9 +261,18 @@ gulp.task( 'browser-sync', function() {
     .pipe( uglify() )
     .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
     .pipe( gulp.dest( jsCustomDestination ) )
-    .pipe( notify( { message: 'TASK: "customJs" Completed! 💯', onLast: true } ) );
+    .pipe( notify( { message: 'Task: "customJs" completed.', onLast: true } ) );
  });
 
+/**
+* Task: 'coreJS'.
+* Copies js files in the root src/js folder directly to dest, without motification.
+*/
+gulp.task( 'coreJS', function() {
+  gulp.src( jsCoreSRC )
+    .pipe( gulp.dest( jsCoreDestination ) )
+    .pipe( notify( { message: 'Task: "coreJS" completed.', onLast: true } ) );
+});
 
  /**
   * Task: `images`.
@@ -282,7 +296,7 @@ gulp.task( 'browser-sync', function() {
           svgoPlugins: [{removeViewBox: false}]
         } ) )
     .pipe(gulp.dest( imagesDestination ))
-    .pipe( notify( { message: 'TASK: "images" Completed! 💯', onLast: true } ) );
+    .pipe( notify( { message: 'Task: "images" completed.', onLast: true } ) );
  });
 
 
@@ -306,7 +320,7 @@ gulp.task( 'browser-sync', function() {
              team          : team
          } ))
         .pipe(gulp.dest(translationDestination + '/' + translationFile ))
-        .pipe( notify( { message: 'TASK: "translate" Completed! 💯', onLast: true } ) )
+        .pipe( notify( { message: 'Task: "translate" completed.', onLast: true } ) )
 
  });
 
@@ -316,9 +330,10 @@ gulp.task( 'browser-sync', function() {
   *
   * Watches for file changes and runs specific tasks.
   */
- gulp.task( 'default', ['styles', 'vendorsJs', 'customJS', 'images', 'browser-sync'], function () {
+ gulp.task( 'default', ['styles', 'vendorsJs', 'customJS', 'coreJS', 'images', 'browser-sync'], function () {
   gulp.watch( projectPHPWatchFiles, reload ); // Reload on PHP file changes.
   gulp.watch( styleWatchFiles, [ 'styles' ] ); // Reload on SCSS file changes.
   gulp.watch( vendorJSWatchFiles, [ 'vendorsJs', reload ] ); // Reload on vendorsJs file changes.
   gulp.watch( customJSWatchFiles, [ 'customJS', reload ] ); // Reload on customJS file changes.
+  gulp.watch( coreJSWatchFiles, [ 'coreJS', reload ] ); // Reload on customJS file changes.
  });
