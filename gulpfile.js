@@ -64,11 +64,11 @@ var jsCoreSRC               = './src/assets/js/*.js'; // Path to core JS scripts
 var jsCoreDestination       = './dist/assets/js/'; // Path to copy the untouched core script files.
 
 // Images related.
-var imagesSRC               = './src/assets/img/raw/**/*.{png,jpg,gif,svg}'; // Source folder of images which should be optimized.
+var imagesSRC               = './src/assets/img/**/*.{png,jpg,gif,svg}'; // Source folder of images which should be optimized.
 var imagesDestination       = './dist/assets/img/'; // Destination folder of optimized images. Must be different from the imagesSRC folder.
 
 // Watch files paths.
-var styleWatchFiles         = './src/assets/css/**/*.scss'; // Path to all *.scss files inside css folder and inside them.
+var styleWatchFiles         = './src/assets/scss/**/*.scss'; // Path to all *.scss files inside css folder and inside them.
 var vendorJSWatchFiles      = './src/assets/js/vendor/*.js'; // Path to all vendor JS files.
 var customJSWatchFiles      = './src/assets/js/custom/*.js'; // Path to all custom JS files.
 var coreJSWatchFiles        = './src/assets/js/*.js'; // Path to all core JS files.
@@ -105,6 +105,8 @@ var sass         = require('gulp-sass'); // Gulp pluign for Sass compilation.
 var minifycss    = require('gulp-uglifycss'); // Minifies CSS files.
 var autoprefixer = require('gulp-autoprefixer'); // Autoprefixing magic.
 var mmq          = require('gulp-merge-media-queries'); // Combine matching media queries into one media query definition.
+var bourbon      = require('bourbon').includePaths;
+var neat         = require('bourbon-neat').includePaths;
 
 // JS related plugins.
 var concat       = require('gulp-concat'); // Concatenates JS files
@@ -182,6 +184,7 @@ gulp.task( 'browser-sync', function() {
       // outputStyle: 'compressed',
       // outputStyle: 'nested',
       // outputStyle: 'expanded',
+      includePaths: [bourbon, neat],
       precision: 10
     } ) )
     .on('error', console.error.bind(console))
@@ -198,11 +201,12 @@ gulp.task( 'browser-sync', function() {
 
     .pipe( browserSync.stream() ) // Reloads style.css if that is enqueued.
 
-    .pipe( rename( { suffix: '.min' } ) )
     .pipe( minifycss( {
       maxLineLen: 10
     }))
     .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
+    .pipe( rename( { suffix: '.min' } ) )
+    .pipe( sourcemaps.write( './' ) )
     .pipe( gulp.dest( styleDestination ) )
 
     .pipe( filter( '**/*.css' ) ) // Filtering stream to only css files
