@@ -29,67 +29,67 @@
 
 // START Editing Project Variables.
 // Project related.
-var project                 = 'castle_s'; // Project Name.
+var project                 = 'WPGulpTheme'; // Project Name.
 var projectURL              = 'localhost:8888'; // Local project URL of your already running WordPress site. Could be something like local.dev or localhost:8888.
 var productURL              = './'; // Theme/Plugin URL. Leave it like it is, since our gulpfile.js lives in the root folder.
 
 // Translation related.
-var text_domain             = 'castle_s'; // Your textdomain here.
-var translationFile         = 'castle_s.pot'; // Name of the transalation file.
+var text_domain             = 'WPGULP'; // Your textdomain here.
+var translationFile         = 'WPGULP.pot'; // Name of the transalation file.
 var translationDestination  = './languages'; // Where to save the translation files.
-var packageName             = 'castle_s'; // Package name.
-var bugReport               = 'https://castello.me'; // Where can users report bugs.
-var lastTranslator          = 'Michael Castello <michael@castello.me>'; // Last translator Email ID.
-var team                    = 'None <none>'; // Team's Email ID.
+var packageName             = 'WPGULP'; // Package name.
+var bugReport               = 'https://AhmadAwais.com/contact/'; // Where can users report bugs.
+var lastTranslator          = 'Ahmad Awais <your_email@email.com>'; // Last translator Email ID.
+var team                    = 'WPTie <your_email@email.com>'; // Team's Email ID.
 
 // Style related.
-var styleSRC                = './src/assets/scss/style.scss'; // Path to main .scss file.
-var styleDestination        = './dist/assets/css'; // Path to place the compiled CSS file.
+var styleSRC                = './assets/scss/style.scss'; // Path to main .scss file.
+var styleDestination        = './dist/css'; // Path to place the compiled CSS file.
 // Default set to root folder.
 
 // JS Vendor related.
-var jsVendorSRC             = './src/assets/js/vendor/*.js'; // Path to JS vendor folder.
-var jsVendorDestination     = './dist/assets/js/'; // Path to place the compiled JS vendors file.
+var jsVendorSRC             = './assets/js/vendor/*.js'; // Path to JS vendor folder.
+var jsVendorDestination     = './dist/js/'; // Path to place the compiled JS vendors file.
 var jsVendorFile            = 'vendors'; // Compiled JS vendors file name.
 // Default set to vendors i.e. vendors.js.
 
 // JS Custom related.
-var jsCustomSRC             = './src/assets/js/custom/*.js'; // Path to JS custom scripts folder.
-var jsCustomDestination     = './dist/assets/js/'; // Path to place the compiled JS custom scripts file.
+var jsCustomSRC             = './assets/js/custom/*.js'; // Path to JS custom scripts folder.
+var jsCustomDestination     = './dist/js/'; // Path to place the compiled JS custom scripts file.
 var jsCustomFile            = 'custom'; // Compiled JS custom file name.
 // Default set to custom i.e. custom.js.
 
 // JS Core related.
-var jsCoreSRC               = './src/assets/js/*.js'; // Path to core JS scripts folder.
-var jsCoreDestination       = './dist/assets/js/'; // Path to copy the untouched core script files.
+var jsCoreSRC               = './assets/js/*.js'; // Path to core JS scripts folder.
+var jsCoreDestination       = './dist/js/'; // Path to copy the untouched core script files.
 
 // Images related.
-var imagesSRC               = './src/assets/img/**/*.{png,jpg,gif,svg}'; // Source folder of images which should be optimized.
-var imagesDestination       = './dist/assets/img/'; // Destination folder of optimized images. Must be different from the imagesSRC folder.
+var imagesSRC               = './assets/img/**/*.{png,jpg,gif,svg}'; // Source folder of images which should be optimized.
+var imagesDestination       = './dist/img/'; // Destination folder of optimized images. Must be different from the imagesSRC folder.
 
 // Watch files paths.
-var styleWatchFiles         = './src/assets/scss/**/*.scss'; // Path to all *.scss files inside css folder and inside them.
-var vendorJSWatchFiles      = './src/assets/js/vendor/*.js'; // Path to all vendor JS files.
-var customJSWatchFiles      = './src/assets/js/custom/*.js'; // Path to all custom JS files.
-var coreJSWatchFiles        = './src/assets/js/*.js'; // Path to all core JS files.
+var styleWatchFiles         = './assets/scss/**/*.scss'; // Path to all *.scss files inside css folder and inside them.
+var vendorJSWatchFiles      = './assets/js/vendor/*.js'; // Path to all vendor JS files.
+var customJSWatchFiles      = './assets/js/custom/*.js'; // Path to all custom JS files.
+var coreJSWatchFiles        = './assets/js/*.js'; // Path to all core JS files.
 var projectPHPWatchFiles    = './**/*.php'; // Path to all PHP files.
 
 
 // Browsers you care about for autoprefixing.
-// Browserlist https        ://github.com/ai/browserslist
+// Browserlist https://github.com/ai/browserslist
 const AUTOPREFIXER_BROWSERS = [
-    'last 2 version',
+    'last 2 versions',
     '> 0.5%',
-    'ie >= 9',
-    'ie_mob >= 10',
-    'ff >= 30',
-    'chrome >= 34',
-    'safari >= 7',
-    'opera >= 23',
-    'ios >= 7',
-    'android >= 4',
-    'bb >= 10'
+    'ie >= 9'
   ];
+
+// Clean-CSS options
+// Options list: https://github.com/jakubpawlowicz/clean-css
+const CLEANCSS_OPTIONS = {
+    compatibility: 'ie9',
+    rebase: false, // this is important as it allows the minified map to reference the scss partials
+    level: '2' // includes option to merge media queries
+  };
 
 // STOP Editing Project Variables.
 
@@ -102,9 +102,8 @@ var gulp         = require('gulp'); // Gulp of-course
 
 // CSS related plugins.
 var sass         = require('gulp-sass'); // Gulp pluign for Sass compilation.
-var minifycss    = require('gulp-uglifycss'); // Minifies CSS files.
+var cleancss     = require('gulp-clean-css'); // Minifies CSS files.
 var autoprefixer = require('gulp-autoprefixer'); // Autoprefixing magic.
-var mmq          = require('gulp-merge-media-queries'); // Combine matching media queries into one media query definition.
 var bourbon      = require('bourbon').includePaths;
 var neat         = require('bourbon-neat').includePaths;
 
@@ -180,7 +179,8 @@ gulp.task( 'browser-sync', function() {
     .pipe( sourcemaps.init() )
     .pipe( sass( {
       errLogToConsole: true,
-      outputStyle: 'compact',
+      noCache: true,
+      // outputStyle: 'compact',
       // outputStyle: 'compressed',
       // outputStyle: 'nested',
       // outputStyle: 'expanded',
@@ -188,30 +188,24 @@ gulp.task( 'browser-sync', function() {
       precision: 10
     } ) )
     .on('error', console.error.bind(console))
-    .pipe( sourcemaps.write( { includeContent: false } ) )
-    .pipe( sourcemaps.init( { loadMaps: true } ) )
-    .pipe( autoprefixer( AUTOPREFIXER_BROWSERS ) )
+    .pipe( autoprefixer( AUTOPREFIXER_BROWSERS ) ) // add prefixes based on options set above
 
     .pipe( sourcemaps.write ( './' ) )
     .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
     .pipe( gulp.dest( styleDestination ) )
 
     .pipe( filter( '**/*.css' ) ) // Filtering stream to only css files
-    .pipe( mmq( { log: true } ) ) // Merge Media Queries only for .min.css version.
-
     .pipe( browserSync.stream() ) // Reloads style.css if that is enqueued.
 
-    .pipe( minifycss( {
-      maxLineLen: 10
-    }))
-    .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
+    .pipe( cleancss( CLEANCSS_OPTIONS ) )
     .pipe( rename( { suffix: '.min' } ) )
-    .pipe( sourcemaps.write( './' ) )
+    .pipe( sourcemaps.write ( './' ) )
+    .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
     .pipe( gulp.dest( styleDestination ) )
 
     .pipe( filter( '**/*.css' ) ) // Filtering stream to only css files
     .pipe( browserSync.stream() )// Reloads style.min.css if that is enqueued.
-    .pipe( notify( { message: 'Task: "styles" completed.', onLast: true } ) )
+    .pipe( notify( { message: 'TASK: "styles" completed.', onLast: true } ) )
  });
 
 
@@ -238,7 +232,7 @@ gulp.task( 'browser-sync', function() {
     .pipe( uglify() )
     .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
     .pipe( gulp.dest( jsVendorDestination ) )
-    .pipe( notify( { message: 'Task: "vendorsJs" completed.', onLast: true } ) );
+    .pipe( notify( { message: 'TASK: "vendorsJs" completed.', onLast: true } ) );
  });
 
 
@@ -265,18 +259,20 @@ gulp.task( 'browser-sync', function() {
     .pipe( uglify() )
     .pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
     .pipe( gulp.dest( jsCustomDestination ) )
-    .pipe( notify( { message: 'Task: "customJs" completed.', onLast: true } ) );
+    .pipe( notify( { message: 'TASK: "customJs" completed.', onLast: true } ) );
  });
 
-/**
-* Task: 'coreJS'.
-* Copies js files in the root src/js folder directly to dest, without motification.
-*/
-gulp.task( 'coreJS', function() {
-  gulp.src( jsCoreSRC )
-    .pipe( gulp.dest( jsCoreDestination ) )
-    .pipe( notify( { message: 'Task: "coreJS" completed.', onLast: true } ) );
-});
+
+ /**
+ * Task: 'coreJS'.
+ * Copies js files in the root src/js folder directly to dest, without motification.
+ */
+ gulp.task( 'coreJS', function() {
+   gulp.src( jsCoreSRC )
+     .pipe( gulp.dest( jsCoreDestination ) )
+     .pipe( notify( { message: 'Task: "coreJS" completed.', onLast: true } ) );
+ });
+
 
  /**
   * Task: `images`.
@@ -300,7 +296,7 @@ gulp.task( 'coreJS', function() {
           svgoPlugins: [{removeViewBox: false}]
         } ) )
     .pipe(gulp.dest( imagesDestination ))
-    .pipe( notify( { message: 'Task: "images" completed.', onLast: true } ) );
+    .pipe( notify( { message: 'TASK: "images" completed.', onLast: true } ) );
  });
 
 
@@ -324,7 +320,7 @@ gulp.task( 'coreJS', function() {
              team          : team
          } ))
         .pipe(gulp.dest(translationDestination + '/' + translationFile ))
-        .pipe( notify( { message: 'Task: "translate" completed.', onLast: true } ) )
+        .pipe( notify( { message: 'TASK: "translate" completed.', onLast: true } ) )
 
  });
 
@@ -334,7 +330,7 @@ gulp.task( 'coreJS', function() {
   *
   * Watches for file changes and runs specific tasks.
   */
- gulp.task( 'default', ['styles', 'vendorsJs', 'customJS', 'coreJS', 'images', 'browser-sync'], function () {
+ gulp.task( 'start', ['styles', 'vendorsJs', 'customJS', 'coreJS', 'images', 'browser-sync'], function () {
   gulp.watch( projectPHPWatchFiles, reload ); // Reload on PHP file changes.
   gulp.watch( styleWatchFiles, [ 'styles' ] ); // Reload on SCSS file changes.
   gulp.watch( vendorJSWatchFiles, [ 'vendorsJs', reload ] ); // Reload on vendorsJs file changes.
